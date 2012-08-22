@@ -1,0 +1,112 @@
+*PrevInsertComplete.txt* Recall and insert mode completion for previously inserted text.
+
+		    PREV INSERT COMPLETE    by Ingo Karkat
+						      *PrevInsertComplete.vim*
+description			|PrevInsertComplete-description|
+usage				|PrevInsertComplete-usage|
+installation			|PrevInsertComplete-installation|
+configuration			|PrevInsertComplete-configuration|
+limitations			|PrevInsertComplete-limitations|
+known problems			|PrevInsertComplete-known-problems|
+todo				|PrevInsertComplete-todo|
+history				|PrevInsertComplete-history|
+
+==============================================================================
+DESCRIPTION				      *PrevInsertComplete-description*
+
+This plugin lets you quickly recall previous insertions and insert them again
+at the cursor position. Essentially, it's the built-in |i_CTRL-A| command
+souped up with history and selection.
+
+In insert mode, you can narrow down the candidates by typing a keyword first;
+then, only insertions with a match will be offered as completion candidates.
+In normal mode, you can directly recall the [count]'th previous insertion, or
+have it list the last 9 insertions and let you choose.
+To avoid that the many minor tactical edits clobber up the history, only
+significant (longer) edits are recalled.
+
+SEE ALSO								     *
+
+- Check out the CompleteHelper.vim plugin page (vimscript #3914) for a full
+  list of insert mode completions powered by it.
+
+==============================================================================
+USAGE						    *PrevInsertComplete-usage*
+							     *i_CTRL-X_CTRL-A*
+CTRL-X CTRL-A		Find previous insertions (|i_CTRL-A|, |quote.|) whose
+			contents match the keyword before the cursor. First, a
+			match at the beginning is tried; if that returns no
+			results, it may match anywhere.
+			Further use of CTRL-X CTRL-A will append insertions done
+			after the previous recall.
+									  *qa*
+[count]qa		Recall and append previous [count]'th insertion.
+								    *q_CTRL-A*
+[count]q<CTRL-A>	Lists the last 9 insertions, then prompts for a number.
+			The chosen insertion is appended [count] times.
+
+==============================================================================
+INSTALLATION				     *PrevInsertComplete-installation*
+
+This script is packaged as a |vimball|. If you have the "gunzip" decompressor
+in your PATH, simply edit the *.vmb.gz package in Vim; otherwise, decompress
+the archive first, e.g. using WinZip. Inside Vim, install by sourcing the
+vimball or via the |:UseVimball| command. >
+    vim PrevInsertComplete*.vmb.gz
+    :so %
+To uninstall, use the |:RmVimball| command.
+
+DEPENDENCIES				     *PrevInsertComplete-dependencies*
+
+- Requires Vim 7.0 or higher.
+- Requires the CompleteHelper.vim plugin (vimscript #3914), version 1.10 or
+  higher.
+
+==============================================================================
+CONFIGURATION				    *PrevInsertComplete-configuration*
+
+For a permanent configuration, put the following commands into your |vimrc|:
+
+If you want to use different mappings, map your keys to the
+<Plug>(PrevInsert...) mapping targets _before_ sourcing this script (e.g. in
+your |vimrc|): >
+    imap <C-a> <Plug>(PrevInsertComplete)
+    nmap <Leader><C-a> <Plug>(PrevInsertRecall)
+    nmap <Leader><A-a> <Plug>(PrevInsertList)
+<
+					      *g:PrevInsertComplete_MinLength*
+Very short insertions are often just minor corrections and not worthwhile to
+recall. The threshold number of inserted characters can be set via: >
+    let g:PrevInsertComplete_MinLength = 10
+<					    *g:PrevInsertComplete_HistorySize*
+The number of recorded insertions can be adjusted. >
+    let g:PrevInsertComplete_HistorySize = 100
+<
+==============================================================================
+LIMITATIONS				      *PrevInsertComplete-limitations*
+
+KNOWN PROBLEMS				   *PrevInsertComplete-known-problems*
+
+TODO						     *PrevInsertComplete-todo*
+
+- Persist recorded insertions across Vim invocations in the |viminfo| file.
+
+
+IDEAS						    *PrevInsertComplete-ideas*
+
+==============================================================================
+HISTORY						  *PrevInsertComplete-history*
+
+1.00	22-Aug-2012
+Initial release.
+
+0.01	06-Oct-2011
+Started development.
+
+==============================================================================
+Copyright: (C) 2011-2012 Ingo Karkat
+The VIM LICENSE applies to this script; see |copyright|.
+
+Maintainer:	Ingo Karkat <ingo@karkat.de>
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:

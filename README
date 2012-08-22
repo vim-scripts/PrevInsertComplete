@@ -1,0 +1,30 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4185
+
+DESCRIPTION
+This plugin lets you quickly recall previous insertions and insert them again
+at the cursor position. Essentially, it's the built-in i_CTRL-A command
+souped up with history and selection.
+
+In insert mode, you can narrow down the candidates by typing a keyword first;
+then, only insertions with a match will be offered as completion candidates.
+In normal mode, you can directly recall the [count]'th previous insertion, or
+have it list the last 9 insertions and let you choose.
+To avoid that the many minor tactical edits clobber up the history, only
+significant (longer) edits are recalled.
+
+SEE ALSO
+- Check out the CompleteHelper.vim plugin page (vimscript #3914) for a full
+  list of insert mode completions powered by it.
+
+USAGE
+CTRL-X CTRL-A           Find previous insertions (i_CTRL-A, quote.) whose
+                        contents match the keyword before the cursor. First, a
+                        match at the beginning is tried; if that returns no
+                        results, it may match anywhere.
+                        Further use of CTRL-X CTRL-A will append insertions done
+                        after the previous recall.
+
+[count]qa               Recall and append previous [count]'th insertion.
+
+[count]q<CTRL-A>        Lists the last 9 insertions, then prompts for a number.
+                        The chosen insertion is appended [count] times.
