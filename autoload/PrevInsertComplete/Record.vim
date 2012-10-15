@@ -1,4 +1,4 @@
-" PrevInsertComplete.vim: Recall and insert mode completion for previously inserted text.
+" PrevInsertComplete/Record.vim: Recording of inserted text.
 "
 " DEPENDENCIES:
 "   - CompleteHelper.vim autoload script.
@@ -9,6 +9,8 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.10.003	01-Sep-2012	Make a:matchObj in CompleteHelper#ExtractText()
+"				optional; it's not used there, anyway.
 "   1.00.002	22-Aug-2012	Minor cleanup to prepare for publishing.
 "	001	09-Nov-2011	file creation from plugin/PrevInsertComplete.vim.
 
@@ -29,7 +31,7 @@ function! s:GetInsertion()
     " range delimited by the marks '[ and '] (last one exclusive).
     let l:startPos = getpos("'[")[1:2]
     let l:endPos = [line("']"), (col("']") - 1)]
-    return CompleteHelper#ExtractText(l:startPos, l:endPos, {})
+    return CompleteHelper#ExtractText(l:startPos, l:endPos)
 endfunction
 function! PrevInsertComplete#Record#Insertion( text )
     if a:text =~# '^\_s*$' || s:strchars(a:text) < g:PrevInsertComplete_MinLength

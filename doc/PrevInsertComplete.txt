@@ -27,7 +27,7 @@ significant (longer) edits are recalled.
 
 SEE ALSO								     *
 
-- Check out the CompleteHelper.vim plugin page (vimscript #3914) for a full
+- Check out the |CompleteHelper.vim| plugin page (vimscript #3914) for a full
   list of insert mode completions powered by it.
 
 ==============================================================================
@@ -59,7 +59,7 @@ To uninstall, use the |:RmVimball| command.
 DEPENDENCIES				     *PrevInsertComplete-dependencies*
 
 - Requires Vim 7.0 or higher.
-- Requires the CompleteHelper.vim plugin (vimscript #3914), version 1.10 or
+- Requires the |CompleteHelper.vim| plugin (vimscript #3914), version 1.11 or
   higher.
 
 ==============================================================================
@@ -67,20 +67,31 @@ CONFIGURATION				    *PrevInsertComplete-configuration*
 
 For a permanent configuration, put the following commands into your |vimrc|:
 
+					      *g:PrevInsertComplete_MinLength*
+Very short insertions are often just minor corrections and not worthwhile to
+recall. The threshold number of inserted characters can be set via: >
+    let g:PrevInsertComplete_MinLength = 6
+<					    *g:PrevInsertComplete_HistorySize*
+The number of recorded insertions can be adjusted. >
+    let g:PrevInsertComplete_HistorySize = 100
+<
+	   *PrevInsertComplete-persistence* *g:PrevInsertComplete_PersistSize*
+The recorded insertions can be kept and restored across Vim sessions, using
+the |viminfo| file. For this to work, the "!" flag must be part of the
+'viminfo' setting: >
+    set viminfo+=!  " Save and restore global variables.
+By default, all recorded insertions are persisted. You can reduce the maximum
+number of insertions to be stored via: >
+    let g:PrevInsertComplete_PersistSize = 10
+or completely turn off persistence by setting the variable to 0.
+
+						    *PrevInsertComplete-remap*
 If you want to use different mappings, map your keys to the
-<Plug>(PrevInsert...) mapping targets _before_ sourcing this script (e.g. in
+<Plug>(PrevInsert...) mapping targets _before_ sourcing the script (e.g. in
 your |vimrc|): >
     imap <C-a> <Plug>(PrevInsertComplete)
     nmap <Leader><C-a> <Plug>(PrevInsertRecall)
     nmap <Leader><A-a> <Plug>(PrevInsertList)
-<
-					      *g:PrevInsertComplete_MinLength*
-Very short insertions are often just minor corrections and not worthwhile to
-recall. The threshold number of inserted characters can be set via: >
-    let g:PrevInsertComplete_MinLength = 10
-<					    *g:PrevInsertComplete_HistorySize*
-The number of recorded insertions can be adjusted. >
-    let g:PrevInsertComplete_HistorySize = 100
 <
 ==============================================================================
 LIMITATIONS				      *PrevInsertComplete-limitations*
@@ -89,13 +100,15 @@ KNOWN PROBLEMS				   *PrevInsertComplete-known-problems*
 
 TODO						     *PrevInsertComplete-todo*
 
-- Persist recorded insertions across Vim invocations in the |viminfo| file.
-
-
 IDEAS						    *PrevInsertComplete-ideas*
 
 ==============================================================================
 HISTORY						  *PrevInsertComplete-history*
+
+1.10	15-Oct-2012
+ENH: Persist recorded insertions across Vim invocations in the |viminfo| file.
+This can be controlled by the |g:PrevInsertComplete_PersistSize|
+configuration.
 
 1.00	22-Aug-2012
 Initial release.

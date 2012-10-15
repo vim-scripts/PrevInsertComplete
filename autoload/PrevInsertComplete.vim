@@ -12,6 +12,10 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.10.005	22-Aug-2012	Do not show relative time when the timestamp is
+"				invalid (i.e. negative or zero). This is better
+"				when the g:PrevInsertComplete_InsertionTimes
+"				somehow wasn't persisted.
 "   1.00.004	21-Aug-2012	Minor: Reduce initial indent in list; :marks and
 "				:jumps have little indent, too.
 "	003	05-May-2012	Move dependency from CompleteHelper.vim to
@@ -23,7 +27,10 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 function! s:ComputeReltime( matchObj )
-    let a:matchObj.menu = ingodate#HumanReltime(localtime() - a:matchObj.menu, {'shortformat': 1, 'rightaligned': 1})
+    let a:matchObj.menu = (a:matchObj.menu <= 0 ?
+    \	'' :
+    \   ingodate#HumanReltime(localtime() - a:matchObj.menu, {'shortformat': 1, 'rightaligned': 1})
+    \)
     return a:matchObj
 endfunction
 if v:version >= 703 || v:version == 702 && has('patch295')
