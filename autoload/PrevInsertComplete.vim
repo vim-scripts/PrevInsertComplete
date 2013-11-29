@@ -3,15 +3,25 @@
 " DEPENDENCIES:
 "   - CompleteHelper/Abbreviate.vim autoload script
 "   - CompleteHelper/Repeat.vim autoload script
-"   - ingodate.vim autoload script
+"   - ingo/avoidprompt.vim autoload script
+"   - ingo/date.vim autoload script
+"   - ingo/msg.vim autoload script
+"   - ingo/register.vim autoload script
 "   - PrevInsertComplete/Record.vim autoload script
+"   - repeat.vim (vimscript #2136) autoload script (optional)
 "
-" Copyright: (C) 2011-2012 Ingo Karkat
+" Copyright: (C) 2011-2013 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.11.008	18-Nov-2013	Use ingo#register#KeepRegisterExecuteOrFunc().
+"				Use ingo#msg#ErrorMsg().
+"				Make recall of insertion (q<CTRL-@>, q<CTRL-A>)
+"				repeatable.
+"   1.11.007	08-Jul-2013	Move ingodate.vim into ingo-library.
+"   1.11.006	07-Jun-2013	Move EchoWithoutScrolling.vim into ingo-library.
 "   1.10.005	22-Aug-2012	Do not show relative time when the timestamp is
 "				invalid (i.e. negative or zero). This is better
 "				when the g:PrevInsertComplete_InsertionTimes
@@ -29,7 +39,7 @@ set cpo&vim
 function! s:ComputeReltime( matchObj )
     let a:matchObj.menu = (a:matchObj.menu <= 0 ?
     \	'' :
-    \   ingodate#HumanReltime(localtime() - a:matchObj.menu, {'shortformat': 1, 'rightaligned': 1})
+    \   ingo#date#HumanReltime(localtime() - a:matchObj.menu, {'shortformat': 1, 'rightaligned': 1})
     \)
     return a:matchObj
 endfunction
@@ -99,49 +109,40 @@ function! PrevInsertComplete#Expr()
 endfunction
 
 function! PrevInsertComplete#Recall( position, multiplier )
-    let l:insertion = get(g:PrevInsertComplete_Insertions, (a:position - 1), '')
-    if empty(l:insertion)
+    let s:insertion = get(g:PrevInsertComplete_Insertions, (a:position - 1), '')
+    if empty(s:insertion)
 	if len(g:PrevInsertComplete_Insertions) == 0
-	    let v:errmsg = 'No insertions yet'
+	    call ingo#msg#ErrorMsg('No insertions yet')
 	else
-	    let v:errmsg = printf('There %s only %d insertion%s in the history',
+	    call ingo#msg#ErrorMsg(printf('There %s only %d insertion%s in the history',
 	    \   len(g:PrevInsertComplete_Insertions) == 1 ? 'is' : 'are',
 	    \   len(g:PrevInsertComplete_Insertions),
 	    \   len(g:PrevInsertComplete_Insertions) == 1 ? '' : 's'
-	    \)
+	    \))
 	endif
-	echohl ErrorMsg
-	echomsg v:errmsg
-	echohl None
-
-	return
+    else
+	call PrevInsertComplete#DoRecall( a:multiplier )
     endif
+endfunction
+function! PrevInsertComplete#DoRecall( multiplier )
 
     " This doesn't work with special characters like <Esc>.
-    "execute 'normal! a' . l:insertion . "\<Esc>"
-
-    let l:save_clipboard = &clipboard
-    set clipboard= " Avoid clobbering the selection and clipboard registers.
-    let l:save_reg = getreg('"')
-    let l:save_regmode = getregtype('"')
-    call setreg('"', l:insertion, 'v')
-    try
-	execute 'normal!' a:multiplier . 'p'
-    finally
-	call setreg('"', l:save_reg, l:save_regmode)
-	let &clipboard = l:save_clipboard
-    endtry
+    "execute 'normal! a' . s:insertion . "\<Esc>"
+    call ingo#register#KeepRegisterExecuteOrFunc(function('PrevInsertComplete#Insert'), s:insertion, a:multiplier)
 
     " Execution of the recall command counts as an insertion itself. However, we
     " do not consider the a:multiplier here.
-    call PrevInsertComplete#Record#Insertion(l:insertion)
+    call PrevInsertComplete#Record#Insertion(s:insertion)
+
+    silent! call repeat#set("\<Plug>(PrevInsertRecallRepeat)", a:multiplier)
+endfunction
+function! PrevInsertComplete#Insert( insertion, multiplier )
+    call setreg('"', a:insertion, 'v')
+    execute 'normal!' a:multiplier . 'p'
 endfunction
 function! PrevInsertComplete#List()
     if len(g:PrevInsertComplete_Insertions) == 0
-	let v:errmsg = 'No insertions yet'
-	echohl ErrorMsg
-	echomsg v:errmsg
-	echohl None
+	call ingo#msg#ErrorMsg('No insertions yet')
 	return
     endif
 
@@ -149,7 +150,7 @@ function! PrevInsertComplete#List()
     echo ' #  insertion'
     echohl None
     for i in range(min([9, len(g:PrevInsertComplete_Insertions)]), 1, -1)
-	echo ' ' . i . '  ' . EchoWithoutScrolling#TranslateLineBreaks(g:PrevInsertComplete_Insertions[i - 1])
+	echo ' ' . i . '  ' . ingo#avoidprompt#TranslateLineBreaks(g:PrevInsertComplete_Insertions[i - 1])
     endfor
     echo 'Type number (<Enter> cancels): '
     let l:choice = nr2char(getchar())

@@ -24,7 +24,7 @@ CTRL-X CTRL-A           Find previous insertions (i_CTRL-A, quote.) whose
                         Further use of CTRL-X CTRL-A will append insertions done
                         after the previous recall.
 
-[count]qa               Recall and append previous [count]'th insertion.
+[count]q<CTRL-@>        Recall and append previous [count]'th insertion.
 
 [count]q<CTRL-A>        Lists the last 9 insertions, then prompts for a number.
                         The chosen insertion is appended [count] times.

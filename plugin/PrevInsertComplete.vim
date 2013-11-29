@@ -5,12 +5,18 @@
 "   - PrevInsertComplete.vim autoload script.
 "   - PrevInsertComplete/Record.vim autoload script.
 "
-" Copyright: (C) 2011-2012 Ingo Karkat
+" Copyright: (C) 2011-2013 Ingo Karkat
 "   The VIM LICENSE applies to this script; see ':help copyright'.
 "
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.11.007	18-Nov-2013	Add <Plug>(PrevInsertRecallRepeat) mapping to
+"				make recall of insertion (q<CTRL-@>, q<CTRL-A>)
+"				repeatable.
+"   1.11.006	28-Jun-2013	Change qa mapping default to q<C-@>; I found it
+"				confusing that I could not record macros into
+"				register a any more.
 "   1.10.005	24-Aug-2012	CHG: Reduce default
 "				g:PrevInsertComplete_MinLength from 10 to 6.
 "				FIX: Handle 'readonly' and 'nomodifiable'
@@ -77,11 +83,13 @@ endif
 
 nnoremap <silent> <Plug>(PrevInsertRecall) :<C-u>call setline('.', getline('.'))<Bar>call PrevInsertComplete#Recall(v:count1, 1)<CR>
 if ! hasmapto('<Plug>(PrevInsertRecall)', 'n')
-    nmap qa <Plug>(PrevInsertRecall)
+    nmap q<C-@> <Plug>(PrevInsertRecall)
 endif
 nnoremap <silent> <Plug>(PrevInsertList) :<C-u>call setline('.', getline('.'))<Bar>call PrevInsertComplete#List()<CR>
 if ! hasmapto('<Plug>(PrevInsertList)', 'n')
     nmap q<C-a> <Plug>(PrevInsertList)
 endif
+
+nnoremap <silent> <Plug>(PrevInsertRecallRepeat) :<C-u>call setline('.', getline('.'))<Bar>call PrevInsertComplete#DoRecall(v:count1)<CR>
 
 " vim: set ts=8 sts=4 sw=4 noexpandtab ff=unix fdm=syntax :

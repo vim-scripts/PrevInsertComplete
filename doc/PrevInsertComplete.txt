@@ -39,8 +39,8 @@ CTRL-X CTRL-A		Find previous insertions (|i_CTRL-A|, |quote.|) whose
 			results, it may match anywhere.
 			Further use of CTRL-X CTRL-A will append insertions done
 			after the previous recall.
-									  *qa*
-[count]qa		Recall and append previous [count]'th insertion.
+								    *q_CTRL-@*
+[count]q<CTRL-@>	Recall and append previous [count]'th insertion.
 								    *q_CTRL-A*
 [count]q<CTRL-A>	Lists the last 9 insertions, then prompts for a number.
 			The chosen insertion is appended [count] times.
@@ -59,8 +59,11 @@ To uninstall, use the |:RmVimball| command.
 DEPENDENCIES				     *PrevInsertComplete-dependencies*
 
 - Requires Vim 7.0 or higher.
+- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.015 or
+  higher.
 - Requires the |CompleteHelper.vim| plugin (vimscript #3914), version 1.11 or
   higher.
+- repeat.vim (vimscript #2136) plugin (optional)
 
 ==============================================================================
 CONFIGURATION				    *PrevInsertComplete-configuration*
@@ -105,6 +108,14 @@ IDEAS						    *PrevInsertComplete-ideas*
 ==============================================================================
 HISTORY						  *PrevInsertComplete-history*
 
+1.11	29-Nov-2013
+- Change qa mapping default to q<C-@>; I found it confusing that I could not
+  record macros into register a any more. To keep the previous mapping, use >
+  :nmap qa <Plug>(PrevInsertRecall)
+- Make recall of insertion (q<CTRL-@>, q<CTRL-A>) repeatable.
+- Add dependency to ingo-library (vimscript #4433). *** You need to separately
+  install ingo-library (vimscript #4433) version 1.015 (or higher)! ***
+
 1.10	15-Oct-2012
 ENH: Persist recorded insertions across Vim invocations in the |viminfo| file.
 This can be controlled by the |g:PrevInsertComplete_PersistSize|
@@ -117,8 +128,8 @@ Initial release.
 Started development.
 
 ==============================================================================
-Copyright: (C) 2011-2012 Ingo Karkat
-The VIM LICENSE applies to this script; see |copyright|.
+Copyright: (C) 2011-2013 Ingo Karkat
+The VIM LICENSE applies to this plugin; see |copyright|.
 
 Maintainer:	Ingo Karkat <ingo@karkat.de>
 ==============================================================================
